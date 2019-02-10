@@ -41,6 +41,14 @@ public class ParkingMeterController {
         repository.save(meter);
     }
 
+    @GetMapping("/meters/{spotId}/state")
+    ParkingMeter.State getState(@PathVariable Integer spotId){
+        ParkingMeter meter = repository.findBySpotId(spotId);
+        if(meter == null) throw new ParkingMeterNotFoundException(spotId);
+
+        return meter.getState();
+    }
+
     @GetMapping("/meters/{spotId}/cost")
     double getParkingCost(@RequestParam boolean disabled, @PathVariable Integer spotId){
         ParkingMeter meter = repository.findBySpotId(spotId);

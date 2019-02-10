@@ -46,7 +46,6 @@ public class ParkingMeter {
         }
     }
 
-
     public double getCost(boolean isDisabled){
         long hoursPassed = Duration.between(startTime, stopTime).toHours();
         long minutesPassed = Duration.between(startTime, stopTime).toMinutes();
