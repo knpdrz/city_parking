@@ -8,7 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 @Entity
@@ -47,22 +49,24 @@ public class ParkingMeter {
     }
 
     public double getCost(boolean isDisabled){
-        long hoursPassed = Duration.between(startTime, stopTime).toHours();
-        long minutesPassed = Duration.between(startTime, stopTime).toMinutes();
+        LocalDateTime billingPeriodEndTime = stopTime;
+        if(state == State.RUNNING) {
+            billingPeriodEndTime = LocalDateTime.now();
+        }
 
-        if(minutesPassed > 0) hoursPassed ++;
-
-        return isDisabled ? getDisabledCost(hoursPassed) : getRegularCost(hoursPassed);
+        long billingPeriodDurationMinutes = Duration.between(startTime, billingPeriodEndTime).toMinutes();
+        int startedHours = (int)Math.ceil((double)billingPeriodDurationMinutes/Duration.ofHours(1).toMinutes());
+        return isDisabled ? getDisabledCost(startedHours) : getRegularCost(startedHours);
     }
 
-    private double getRegularCost(long hoursPassed){
+    private double getRegularCost(int hoursPassed){
         double multiplier = 1.5;
         if(hoursPassed < 1) return 0;
         else if(hoursPassed == 1) return 1;
         else return 1+2*(1-Math.pow(multiplier,hoursPassed-1))/(1-multiplier);
     }
 
-    private double getDisabledCost(long hoursPassed){
+    private double getDisabledCost(int hoursPassed){
         double multiplier = 1.2;
         if(hoursPassed <= 1) return 0;
         else return 2*(1-Math.pow(multiplier,hoursPassed-1))/(1-multiplier);
