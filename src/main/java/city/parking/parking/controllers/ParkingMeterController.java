@@ -3,10 +3,7 @@ package city.parking.parking.controllers;
 import city.parking.parking.ParkingMeterRepository;
 import city.parking.parking.entities.ParkingMeter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -42,5 +39,15 @@ public class ParkingMeterController {
             meter.stopMeter();
             repository.save(meter);
         }
+    }
+
+    @GetMapping("/meters/{spotId}/cost")
+    double getParkingCost(@RequestParam boolean disabled, @PathVariable Integer spotId){
+        ParkingMeter meter = repository.findBySpotId(spotId).get(0);
+
+        if(meter != null) {
+            return meter.getCost(disabled);
+        }
+        return -1;
     }
 }
