@@ -16,7 +16,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @Slf4j
 public class ParkingMeter {
-    enum State{
+    public enum State{
         UNUSED, RUNNING;
     }
 
@@ -46,6 +46,7 @@ public class ParkingMeter {
             stopTime = DateTime.now();
         }
     }
+
 
     public double getCost(boolean isDisabled){
         Period parkingPeriod = new Period(startTime, stopTime);
