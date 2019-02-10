@@ -25,20 +25,17 @@ public class ParkingMeterController {
 
     @PutMapping("/meters/{spotId}/start")
     void startMeter(@PathVariable Integer spotId){
-        List<ParkingMeter> meters = repository.findBySpotId(spotId);
-        if(meters.isEmpty()) throw new ParkingMeterNotFoundException(spotId);
+        ParkingMeter meter = repository.findBySpotId(spotId);
+        if(meter == null) throw new ParkingMeterNotFoundException(spotId);
 
-        ParkingMeter meter = meters.get(0);
         meter.startMeter();
         repository.save(meter);
     }
 
     @PutMapping("/meters/{spotId}/stop")
     void stopMeter(@PathVariable Integer spotId){
-        List<ParkingMeter> meters = repository.findBySpotId(spotId);
-        if(meters.isEmpty()) throw new ParkingMeterNotFoundException(spotId);
-
-        ParkingMeter meter = meters.get(0);
+        ParkingMeter meter = repository.findBySpotId(spotId);
+        if(meter == null) throw new ParkingMeterNotFoundException(spotId);
 
         meter.stopMeter();
         repository.save(meter);
@@ -46,10 +43,8 @@ public class ParkingMeterController {
 
     @GetMapping("/meters/{spotId}/cost")
     double getParkingCost(@RequestParam boolean disabled, @PathVariable Integer spotId){
-        List<ParkingMeter> meters = repository.findBySpotId(spotId);
-        if(meters.isEmpty()) throw new ParkingMeterNotFoundException(spotId);
-
-        ParkingMeter meter = meters.get(0);
+        ParkingMeter meter = repository.findBySpotId(spotId);
+        if(meter == null) throw new ParkingMeterNotFoundException(spotId);
 
         return meter.getCost(disabled);
     }

@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ParkingMeterRepository extends JpaRepository<ParkingMeter, Integer> {
-    List<ParkingMeter> findBySpotId(Integer spotId);
+    ParkingMeter findBySpotId(Integer spotId);
 }
