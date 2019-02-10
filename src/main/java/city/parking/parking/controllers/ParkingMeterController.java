@@ -49,6 +49,15 @@ public class ParkingMeterController {
         return meter.getState();
     }
 
+    @PutMapping("/meters/{spotId}/pay")
+    void pay(@PathVariable Integer spotId, @RequestParam boolean disabled){
+        ParkingMeter meter = repository.findBySpotId(spotId);
+        if(meter == null) throw new ParkingMeterNotFoundException(spotId);
+
+        meter.pay(disabled);
+        repository.save(meter);
+    }
+
     @GetMapping("/meters/{spotId}/cost")
     double getParkingCost(@RequestParam boolean disabled, @PathVariable Integer spotId){
         ParkingMeter meter = repository.findBySpotId(spotId);

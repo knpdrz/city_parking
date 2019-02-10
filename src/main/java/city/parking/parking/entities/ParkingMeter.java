@@ -26,10 +26,12 @@ public class ParkingMeter {
     private LocalDateTime startTime;
     private LocalDateTime stopTime;
     private State state;
+    private Double currentDailyIncome;
 
     public ParkingMeter(Integer spotId){
         this.spotId = spotId;
         state = State.UNUSED;
+        currentDailyIncome = 0.0;
     }
 
     public void startMeter(){
@@ -48,15 +50,17 @@ public class ParkingMeter {
         }
     }
 
-    public double getCost(boolean isDisabled){
-        LocalDateTime billingPeriodEndTime = stopTime;
-        if(state == State.RUNNING) {
-            billingPeriodEndTime = LocalDateTime.now();
-        }
+    public void pay(boolean isDisabled){
+        double cost = getCost(isDisabled);
+        currentDailyIncome += cost;
+        log.info("current daily income = " + currentDailyIncome);
+    }
 
-        long billingPeriodDurationMinutes = Duration.between(startTime, billingPeriodEndTime).toMinutes();
-        int startedHours = (int)Math.ceil((double)billingPeriodDurationMinutes/Duration.ofHours(1).toMinutes());
-        return isDisabled ? getDisabledCost(startedHours) : getRegularCost(startedHours);
+    public double getCost(boolean isDisabled){
+        long billingPeriodDurationMilis = Duration.between(startTime, stopTime).toMillis();
+        int startedHours = (int)Math.ceil((double)billingPeriodDurationMilis/Duration.ofHours(1).toMillis());
+        double cost = isDisabled ? getDisabledCost(startedHours) : getRegularCost(startedHours);
+        return cost;
     }
 
     private double getRegularCost(int hoursPassed){
