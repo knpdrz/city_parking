@@ -23,6 +23,17 @@ public class ParkingMeterController {
         return repository.findAll();
     }
 
+    @GetMapping("/meters/income")
+    double getDailyIncome(){
+        double income = 0;
+        List<ParkingMeter> allMeters = repository.findAll();
+
+        for (ParkingMeter meter : allMeters) {
+            income += meter.getCurrentDailyIncome();
+        }
+        return income;
+    }
+
     @PutMapping("/meters/{spotId}/start")
     void startMeter(@PathVariable Integer spotId){
         ParkingMeter meter = repository.findBySpotId(spotId);
