@@ -26,12 +26,10 @@ public class ParkingMeter {
     private LocalDateTime startTime;
     private LocalDateTime stopTime;
     private State state;
-    private Double currentDailyIncome;
 
     public ParkingMeter(Integer spotId){
         this.spotId = spotId;
         state = State.UNUSED;
-        currentDailyIncome = 0.0;
     }
 
     public void startMeter(){
@@ -48,12 +46,6 @@ public class ParkingMeter {
             state = State.UNUSED;
             stopTime = LocalDateTime.now();
         }
-    }
-
-    public void pay(boolean isDisabled){
-        double cost = getCost(isDisabled);
-        currentDailyIncome += cost;
-        log.info("current daily income = " + currentDailyIncome);
     }
 
     public double getCost(boolean isDisabled){
