@@ -1,6 +1,6 @@
 package city.parking.parking;
 
-import city.parking.parking.entities.ParkingProcess;
+import city.parking.parking.repositories.ParkingProcessRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;

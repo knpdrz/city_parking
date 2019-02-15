@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Slf4j
 public class ParkingProcess {
     public enum Stage {
-        ONGOING, STOPPED_UNPAID;
+        ONGOING, STOPPED_UNPAID, PAID;
     }
 
     private @Id @GeneratedValue Integer id;

@@ -1,8 +1,10 @@
-package city.parking.parking;
+package city.parking.parking.services;
 
+import city.parking.parking.repositories.ParkingProcessRepository;
 import city.parking.parking.entities.ParkingProcess;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,4 +34,7 @@ public class ParkingProcessService {
         repository.save(parkingProcess);
         return parkingProcess;
     }
+
+
+
 }
