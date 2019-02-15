@@ -1,4 +1,4 @@
-package city.parking.parking.entities;
+package city.parking.entities;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Setter
-@Slf4j
 public class ParkingProcess {
     public enum Stage {
         ONGOING, STOPPED_UNPAID, PAID;
@@ -26,5 +25,6 @@ public class ParkingProcess {
     private LocalDateTime parkingStopTime;
     private Stage stage;
     private boolean isForDisabled;
+    private double cost;
 
 }

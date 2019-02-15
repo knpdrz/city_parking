@@ -1,4 +1,4 @@
-package city.parking.parking;
+package city.parking;
 
 public class ParkingMeterNotFoundException extends RuntimeException {
     public ParkingMeterNotFoundException(Integer spotId){

@@ -1,6 +1,6 @@
-package city.parking.parking.repositories;
+package city.parking.repositories;
 
-import city.parking.parking.entities.ParkingProcess;
+import city.parking.entities.ParkingProcess;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
