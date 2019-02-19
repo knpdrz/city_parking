@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -15,5 +16,6 @@ import javax.persistence.Id;
 public class Payment {
     private @Id @GeneratedValue Integer id;
     private Integer parkingProcessId;
-    private Integer amount;
+    private Double cost;
+    private LocalDateTime date;
 }

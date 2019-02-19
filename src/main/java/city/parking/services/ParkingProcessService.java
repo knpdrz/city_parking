@@ -44,7 +44,7 @@ public class ParkingProcessService {
         return parkingProcess;
     }
 
-    public double getParkingCost(Integer meterId) {
+    public Double getParkingCost(Integer meterId) {
         ParkingProcess parkingProcess = repository.findByMeterIdAndStage(meterId, ParkingProcess.Stage.STOPPED_UNPAID);
         return parkingProcess.getCost();
     }

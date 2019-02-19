@@ -25,6 +25,6 @@ public class ParkingProcess {
     private LocalDateTime parkingStopTime;
     private Stage stage;
     private boolean isForDisabled;
-    private double cost;
+    private Double cost;
 
 }
