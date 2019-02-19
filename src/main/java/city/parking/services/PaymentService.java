@@ -14,6 +14,9 @@ import java.util.Optional;
 
 @Service
 public class PaymentService {
+    private static final LocalTime FIRST_HOUR_IN_DAY = LocalTime.of(0,0,0);
+    private static final LocalTime LAST_HOUR_IN_DAY = LocalTime.of(23,59, 59);
+
     private final ParkingProcessRepository parkingProcessRepository;
     private final PaymentRepository paymentRepository;
 
@@ -40,8 +43,8 @@ public class PaymentService {
 
 
     public Double getDailyProfit(LocalDate day) {
-        LocalDateTime dayStartDate = LocalDateTime.of(day, LocalTime.of(0,0,0));
-        LocalDateTime dayEndDate = LocalDateTime.of(day, LocalTime.of(23,59, 59));
+        LocalDateTime dayStartDate = LocalDateTime.of(day, FIRST_HOUR_IN_DAY);
+        LocalDateTime dayEndDate = LocalDateTime.of(day, LAST_HOUR_IN_DAY);
 
         List<Payment> payments = paymentRepository.findAllByDateBetween(dayStartDate, dayEndDate);
         double dailyProfit = 0;

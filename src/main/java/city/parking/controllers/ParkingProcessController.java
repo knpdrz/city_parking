@@ -1,8 +1,10 @@
 package city.parking.controllers;
 
+import city.parking.ParkingProcessStageConverter;
 import city.parking.entities.ParkingProcess;
 import city.parking.services.ParkingProcessService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +19,10 @@ public class ParkingProcessController {
         this.parkingProcessService = parkingProcessService;
     }
 
-    @RequestMapping(value = "all", method = RequestMethod.GET)
-    public List<ParkingProcess> getAllParkingProcesses(){
+    @RequestMapping(method = RequestMethod.GET)
+    public List<ParkingProcess> getParkingProcessesByStage(@RequestParam(name = "stage", required = false) ParkingProcess.Stage processStage){
+        if(processStage != null)
+            return parkingProcessService.findMetersByState(processStage);
         return parkingProcessService.findAll();
     }
 
@@ -32,15 +36,9 @@ public class ParkingProcessController {
         return parkingProcessService.stopParkingMeter(meterId);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public List<ParkingProcess> getOngoingParkingProcesses(){
-        return parkingProcessService.findMetersByState(ParkingProcess.Stage.ONGOING);
-    }
-
     @RequestMapping(value = "{meterId}/cost", method = RequestMethod.GET)
     public String getParkingCost(@PathVariable Integer meterId){
         return parkingProcessService.getParkingCost(meterId) + " PLN";
     }
-
 
 }
