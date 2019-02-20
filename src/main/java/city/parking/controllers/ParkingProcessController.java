@@ -2,6 +2,7 @@ package city.parking.controllers;
 
 import city.parking.ParkingProcessStageConverter;
 import city.parking.entities.ParkingProcess;
+import city.parking.entities.ParkingProcessMeterSwitch;
 import city.parking.services.ParkingProcessService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.WebDataBinder;
@@ -31,9 +32,10 @@ public class ParkingProcessController {
         return parkingProcessService.startParkingProcess(process);
     }
 
-    @RequestMapping(value = "stop/{meterId}", method = RequestMethod.GET)
-    public ParkingProcess stopParkingMeter(@PathVariable Integer meterId){
-        return parkingProcessService.stopParkingMeter(meterId);
+    @RequestMapping(value = "/{processId}", method = RequestMethod.PATCH)
+    public void stopParkingMeter(@PathVariable Integer processId,
+                                           @RequestBody ParkingProcessMeterSwitch processMeterSwitch){
+        parkingProcessService.updateParkingProcess(processId, processMeterSwitch);
     }
 
     @RequestMapping(value = "{meterId}/cost", method = RequestMethod.GET)

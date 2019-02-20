@@ -1,5 +1,6 @@
 package city.parking.services;
 
+import city.parking.entities.ParkingProcessMeterSwitch;
 import city.parking.repositories.ParkingProcessRepository;
 import city.parking.entities.ParkingProcess;
 import org.springframework.stereotype.Service;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ParkingProcessService {
@@ -34,14 +36,14 @@ public class ParkingProcessService {
         return parkingProcess;
     }
 
-    public ParkingProcess stopParkingMeter(Integer meterId) {
-        ParkingProcess parkingProcess = repository.findByMeterIdAndStage(meterId, ParkingProcess.Stage.ONGOING);
-        parkingProcess.setParkingStopTime(LocalDateTime.now());
-        parkingProcess.setStage(ParkingProcess.Stage.STOPPED_UNPAID);
-        parkingProcess.setCost(calculateParkingCost(parkingProcess));
-
-        repository.save(parkingProcess);
-        return parkingProcess;
+    public void updateParkingProcess(Integer processId, ParkingProcessMeterSwitch processMeterSwitch) {
+        Optional<ParkingProcess> processOptional = repository.findById(processId);
+        if(processOptional.isPresent()){
+            if(!processMeterSwitch.isMeterRunning()){
+                ParkingProcess process = processOptional.get();
+                stopParkingMeter(process);
+            }
+        }
     }
 
     public Double getParkingCost(Integer meterId) {
@@ -73,5 +75,13 @@ public class ParkingProcessService {
     private double getDisabledCost(int hoursPassed){
         if(hoursPassed <= 1) return 0;
         else return 2*(1-Math.pow(costForDisabledMultiplier,hoursPassed-1))/(1-costForDisabledMultiplier);
+    }
+
+    private void stopParkingMeter(ParkingProcess process){
+        process.setParkingStopTime(LocalDateTime.now());
+        process.setStage(ParkingProcess.Stage.STOPPED_UNPAID);
+        process.setCost(calculateParkingCost(process));
+
+        repository.save(process);
     }
 }

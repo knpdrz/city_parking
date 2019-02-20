@@ -41,7 +41,6 @@ public class PaymentService {
         return payment;
     }
 
-
     public Double getDailyProfit(LocalDate day) {
         LocalDateTime dayStartDate = LocalDateTime.of(day, FIRST_HOUR_IN_DAY);
         LocalDateTime dayEndDate = LocalDateTime.of(day, LAST_HOUR_IN_DAY);
