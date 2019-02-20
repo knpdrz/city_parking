@@ -35,6 +35,8 @@ public class PaymentService {
         processOptional.ifPresent(process -> {
             payment.setCost(process.getCost());
             payment.setDate(LocalDateTime.now());
+            process.setStage(ParkingProcess.Stage.PAID);
+            parkingProcessRepository.save(process);
             paymentRepository.save(payment);
         });
         paymentRepository.save(payment);

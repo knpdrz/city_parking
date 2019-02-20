@@ -38,9 +38,8 @@ public class ParkingProcessController {
         parkingProcessService.updateParkingProcess(processId, processMeterSwitch);
     }
 
-    @RequestMapping(value = "{meterId}/cost", method = RequestMethod.GET)
-    public String getParkingCost(@PathVariable Integer meterId){
-        return parkingProcessService.getParkingCost(meterId) + " PLN";
+    @RequestMapping(value = "/{processId}/costs", method = RequestMethod.GET)
+    public String getParkingCost(@PathVariable Integer processId){
+        return parkingProcessService.getParkingCost(processId) + " PLN";
     }
-
 }

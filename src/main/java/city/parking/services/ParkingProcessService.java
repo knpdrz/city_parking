@@ -46,9 +46,12 @@ public class ParkingProcessService {
         }
     }
 
-    public Double getParkingCost(Integer meterId) {
-        ParkingProcess parkingProcess = repository.findByMeterIdAndStage(meterId, ParkingProcess.Stage.STOPPED_UNPAID);
-        return parkingProcess.getCost();
+    public Double getParkingCost(Integer processId) {
+        Optional<ParkingProcess> parkingProcessOptional = repository.findById(processId);
+        if(parkingProcessOptional.isPresent()){
+            return parkingProcessOptional.get().getCost();
+        }
+        return -1.0;
     }
 
     private int getParkingTimeInHours(ParkingProcess process){
