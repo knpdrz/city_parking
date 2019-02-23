@@ -23,7 +23,7 @@ public class ParkingProcess {
     private LocalDateTime parkingStartTime;
     private LocalDateTime parkingStopTime;
     private Stage stage;
-    private boolean isForDisabled;
+    private boolean forDisabled;
     @Embedded private Money primaryCurrencyCost;
 
 }

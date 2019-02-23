@@ -96,7 +96,6 @@ public class ParkingProcessService {
         process.setParkingStopTime(LocalDateTime.now());
         process.setStage(ParkingProcess.Stage.STOPPED_UNPAID);
         process.setPrimaryCurrencyCost(calculatePrimaryParkingCost(process));
-
         repository.save(process);
     }
 }
