@@ -4,6 +4,7 @@ import city.parking.entities.Money;
 import city.parking.entities.Payment;
 import city.parking.services.PaymentService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -19,17 +20,17 @@ public class PaymentController {
     }
 
     @GetMapping(path = "/payments")
-    public List<Payment> getAllPayments(){
-        return paymentService.findAllPayments();
+    public ResponseEntity<List<Payment>> getAllPayments(){
+        return ResponseEntity.ok(paymentService.findAllPayments());
     }
 
     @PostMapping(path = "/payments")
-    public Payment makePayment(@RequestBody Payment payment){
-        return paymentService.makePayment(payment);
+    public ResponseEntity<Payment> makePayment(@RequestBody Payment payment){
+        return ResponseEntity.ok(paymentService.makePayment(payment));
     }
 
     @GetMapping(path = "/profits")
-    public Collection<Money> getDailyProfit(@RequestParam("day") @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate day){
-        return paymentService.getDailyProfit(day);
+    public ResponseEntity<Collection<Money>> getDailyProfit(@RequestParam("day") @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate day){
+        return ResponseEntity.ok(paymentService.getDailyProfit(day));
     }
 }

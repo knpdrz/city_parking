@@ -44,7 +44,7 @@ public class ParkingProcessController {
     }
 
     @GetMapping(value = "/{processId}/costs")
-    public Set<Money> getParkingCost(@PathVariable Integer processId){
-        return parkingProcessService.getParkingCosts(processId);
+    public ResponseEntity<Set<Money>> getParkingCost(@PathVariable Integer processId){
+        return ResponseEntity.ok(parkingProcessService.getParkingCosts(processId));
     }
 }

@@ -65,8 +65,9 @@ public class ParkingProcessService {
             Money primaryCurrencyCost = parkingProcessOptional.get().getPrimaryCurrencyCost();
             costs.add(primaryCurrencyCost);
             return costs;
+        }else{
+            throw new ParkingProcessNotFoundException(processId);
         }
-        return new HashSet<>();
     }
 
     private int getParkingTimeInHours(ParkingProcess process){
