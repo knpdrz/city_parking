@@ -3,7 +3,6 @@ package city.parking.services;
 import city.parking.entities.Money;
 import city.parking.entities.ParkingProcess;
 import city.parking.entities.ParkingProcessPartialUpdateRequest;
-import city.parking.exceptions.InvalidParkingProcessStageUpdateException;
 import city.parking.exceptions.ParkingProcessNotFoundException;
 import city.parking.repositories.ParkingProcessRepository;
 import org.springframework.stereotype.Service;
@@ -44,14 +43,11 @@ public class ParkingProcessService {
                                           ParkingProcessPartialUpdateRequest parkingProcessPartialUpdateRequest) {
         Optional<ParkingProcess> processOptional = repository.findById(processId);
         if (processOptional.isPresent()) {
-            if (parkingProcessPartialUpdateRequest.getNewParkingProcessStage().equals(ParkingProcess.Stage.STOPPED_UNPAID)) {
-                ParkingProcess process = processOptional.get();
+            ParkingProcess process = processOptional.get();
+            if (parkingProcessPartialUpdateRequest.isParkingMeterToBeStopped()) {
                 stopParkingMeter(process);
-                return process;
-            }else{
-                throw new InvalidParkingProcessStageUpdateException(
-                        parkingProcessPartialUpdateRequest.getNewParkingProcessStage().toString());
             }
+            return process;
         }else{
             throw new ParkingProcessNotFoundException(processId);
         }
