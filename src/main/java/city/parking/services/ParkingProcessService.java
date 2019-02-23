@@ -1,13 +1,12 @@
 package city.parking.services;
 
+import city.parking.entities.Money;
+import city.parking.entities.ParkingProcess;
+import city.parking.entities.ParkingProcessPartialUpdateRequest;
 import city.parking.exceptions.InvalidParkingProcessStageUpdateException;
 import city.parking.exceptions.ParkingProcessNotFoundException;
-import city.parking.entities.Money;
-import city.parking.entities.ParkingProcessPartialUpdateRequest;
 import city.parking.repositories.ParkingProcessRepository;
-import city.parking.entities.ParkingProcess;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
