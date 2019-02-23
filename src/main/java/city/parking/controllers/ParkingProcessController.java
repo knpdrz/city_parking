@@ -5,12 +5,12 @@ import city.parking.entities.ParkingProcess;
 import city.parking.entities.ParkingProcessMeterSwitch;
 import city.parking.services.ParkingProcessService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
 
-@Slf4j
 @RestController
 @RequestMapping(path = "/parking-processes")
 public class ParkingProcessController {
@@ -20,25 +20,25 @@ public class ParkingProcessController {
         this.parkingProcessService = parkingProcessService;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public List<ParkingProcess> getParkingProcessesByStage(@RequestParam(name = "stage", required = false) ParkingProcess.Stage processStage){
+    @GetMapping
+    public ResponseEntity<List<ParkingProcess>> getParkingProcessesByStage(@RequestParam(name = "stage", required = false) ParkingProcess.Stage processStage){
         if(processStage != null)
-            return parkingProcessService.findMetersByState(processStage);
-        return parkingProcessService.findAll();
+            return ResponseEntity.ok(parkingProcessService.findMetersByState(processStage));
+        return ResponseEntity.ok(parkingProcessService.findAll());
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ParkingProcess startParkingProcess(@RequestBody ParkingProcess process){
-        return parkingProcessService.startParkingProcess(process);
+    @PostMapping
+    public ResponseEntity<ParkingProcess> startParkingProcess(@RequestBody ParkingProcess process){
+        return ResponseEntity.ok(parkingProcessService.startParkingProcess(process));
     }
 
-    @RequestMapping(value = "/{processId}", method = RequestMethod.PATCH)
+    @PatchMapping(value = "/{processId}")
     public void stopParkingMeter(@PathVariable Integer processId,
                                            @RequestBody ParkingProcessMeterSwitch processMeterSwitch){
         parkingProcessService.updateParkingProcess(processId, processMeterSwitch);
     }
 
-    @RequestMapping(value = "/{processId}/costs", method = RequestMethod.GET)
+    @GetMapping(value = "/{processId}/costs")
     public Set<Money> getParkingCost(@PathVariable Integer processId){
         return parkingProcessService.getParkingCosts(processId);
     }
