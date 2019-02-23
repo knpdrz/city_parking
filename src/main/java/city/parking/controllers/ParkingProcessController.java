@@ -22,7 +22,8 @@ public class ParkingProcessController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ParkingProcess>> getParkingProcessesByStage(@RequestParam(name = "stage", required = false) ParkingProcess.Stage processStage){
+    public ResponseEntity<List<ParkingProcess>> getParkingProcessesByStage(
+            @RequestParam(name = "stage", required = false) ParkingProcess.Stage processStage){
         if(processStage != null)
             return ResponseEntity.ok(parkingProcessService.findMetersByState(processStage));
         return ResponseEntity.ok(parkingProcessService.findAll());
@@ -35,11 +36,10 @@ public class ParkingProcessController {
 
     @PatchMapping(value = "/{processId}")
     public ResponseEntity stopParkingMeter(@PathVariable Integer processId,
-                                           @Valid @RequestBody ParkingProcessPartialUpdateRequest parkingProcessPartialUpdateRequest){
+                                           @RequestBody ParkingProcessPartialUpdateRequest parkingProcessPartialUpdateRequest){
         return new ResponseEntity<>(parkingProcessService
                 .updateParkingProcessStage(processId, parkingProcessPartialUpdateRequest),
                 HttpStatus.SEE_OTHER);
-
     }
 
     @GetMapping(value = "/{processId}/costs")

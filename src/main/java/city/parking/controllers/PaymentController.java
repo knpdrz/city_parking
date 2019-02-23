@@ -5,6 +5,7 @@ import city.parking.services.PaymentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -22,7 +23,7 @@ public class PaymentController {
     }
 
     @PostMapping
-    public ResponseEntity<Payment> makePayment(@RequestBody Payment payment){
+    public ResponseEntity<Payment> makePayment(@Valid @RequestBody Payment payment){
         return ResponseEntity.ok(paymentService.makePayment(payment));
     }
 }

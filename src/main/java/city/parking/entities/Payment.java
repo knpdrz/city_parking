@@ -8,6 +8,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -15,8 +16,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Setter
 public class Payment {
-    @Id @GeneratedValue private Integer id;
+    @Id @GeneratedValue
+    private Integer id;
+    @NotNull(message = "Parking process id cannot be null")
     private Integer parkingProcessId;
-    @Embedded private Money balancePaid;
+    @Embedded
+    private Money balancePaid;
     private LocalDateTime date;
 }

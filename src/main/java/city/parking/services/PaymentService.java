@@ -3,6 +3,7 @@ package city.parking.services;
 import city.parking.entities.Money;
 import city.parking.entities.ParkingProcess;
 import city.parking.entities.Payment;
+import city.parking.exceptions.ParkingProcessNotFoundException;
 import city.parking.repositories.ParkingProcessRepository;
 import city.parking.repositories.PaymentRepository;
 import org.springframework.stereotype.Service;
@@ -32,15 +33,13 @@ public class PaymentService {
 
     public Payment makePayment(Payment payment) {
         Optional<ParkingProcess> processOptional = parkingProcessRepository.findById(payment.getParkingProcessId());
-        processOptional.ifPresent(process -> {
-            payment.setBalancePaid(process.getPrimaryCurrencyCost());
-            payment.setDate(LocalDateTime.now());
-            process.setStage(ParkingProcess.Stage.PAID);
-            parkingProcessRepository.save(process);
-            paymentRepository.save(payment);
-        });
-        paymentRepository.save(payment);
-        return payment;
+        if(processOptional.isPresent()){
+            ParkingProcess process = processOptional.get();
+            setPaymentDetails(payment, process);
+            return payment;
+        }else {
+            throw new ParkingProcessNotFoundException(payment.getParkingProcessId());
+        }
     }
 
     public Collection<Money> getDailyProfit(LocalDate day) {
@@ -65,5 +64,13 @@ public class PaymentService {
 
         }
         return profitsMap.values();
+    }
+
+    private void setPaymentDetails(Payment payment, ParkingProcess process){
+        payment.setBalancePaid(process.getPrimaryCurrencyCost());
+        payment.setDate(LocalDateTime.now());
+        process.setStage(ParkingProcess.Stage.PAID);
+        parkingProcessRepository.save(process);
+        paymentRepository.save(payment);
     }
 }
