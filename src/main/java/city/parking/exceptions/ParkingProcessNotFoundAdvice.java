@@ -1,5 +1,6 @@
-package city.parking;
+package city.parking.exceptions;
 
+import city.parking.exceptions.ParkingProcessNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -7,11 +8,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class ParkingMeterNotFoundAdvice {
+public class ParkingProcessNotFoundAdvice {
     @ResponseBody
-    @ExceptionHandler(ParkingMeterNotFoundException.class)
+    @ExceptionHandler(ParkingProcessNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String parkingMeterNotFoundHandler(ParkingMeterNotFoundException e){
+    String parkingProcessNotFoundHandler(ParkingProcessNotFoundException e){
         return e.getMessage();
     }
 }

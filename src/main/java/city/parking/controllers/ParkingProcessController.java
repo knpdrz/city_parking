@@ -2,12 +2,14 @@ package city.parking.controllers;
 
 import city.parking.entities.Money;
 import city.parking.entities.ParkingProcess;
-import city.parking.entities.ParkingProcessMeterSwitch;
+import city.parking.entities.ParkingProcessPartialUpdateRequest;
 import city.parking.services.ParkingProcessService;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
 
@@ -33,9 +35,12 @@ public class ParkingProcessController {
     }
 
     @PatchMapping(value = "/{processId}")
-    public void stopParkingMeter(@PathVariable Integer processId,
-                                           @RequestBody ParkingProcessMeterSwitch processMeterSwitch){
-        parkingProcessService.updateParkingProcess(processId, processMeterSwitch);
+    public ResponseEntity stopParkingMeter(@PathVariable Integer processId,
+                                           @Valid @RequestBody ParkingProcessPartialUpdateRequest parkingProcessPartialUpdateRequest){
+        return new ResponseEntity<>(parkingProcessService
+                .updateParkingProcessStage(processId, parkingProcessPartialUpdateRequest),
+                HttpStatus.SEE_OTHER);
+
     }
 
     @GetMapping(value = "/{processId}/costs")

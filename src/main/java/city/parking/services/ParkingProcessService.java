@@ -1,10 +1,13 @@
 package city.parking.services;
 
+import city.parking.exceptions.InvalidParkingProcessStageUpdateException;
+import city.parking.exceptions.ParkingProcessNotFoundException;
 import city.parking.entities.Money;
-import city.parking.entities.ParkingProcessMeterSwitch;
+import city.parking.entities.ParkingProcessPartialUpdateRequest;
 import city.parking.repositories.ParkingProcessRepository;
 import city.parking.entities.ParkingProcess;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -38,13 +41,20 @@ public class ParkingProcessService {
         return parkingProcess;
     }
 
-    public void updateParkingProcess(Integer processId, ParkingProcessMeterSwitch processMeterSwitch) {
+    public ParkingProcess updateParkingProcessStage(Integer processId,
+                                          ParkingProcessPartialUpdateRequest parkingProcessPartialUpdateRequest) {
         Optional<ParkingProcess> processOptional = repository.findById(processId);
-        if(processOptional.isPresent()){
-            if(!processMeterSwitch.isMeterRunning()){
+        if (processOptional.isPresent()) {
+            if (parkingProcessPartialUpdateRequest.getNewParkingProcessStage().equals(ParkingProcess.Stage.STOPPED_UNPAID)) {
                 ParkingProcess process = processOptional.get();
                 stopParkingMeter(process);
+                return process;
+            }else{
+                throw new InvalidParkingProcessStageUpdateException(
+                        parkingProcessPartialUpdateRequest.getNewParkingProcessStage().toString());
             }
+        }else{
+            throw new ParkingProcessNotFoundException(processId);
         }
     }
 
