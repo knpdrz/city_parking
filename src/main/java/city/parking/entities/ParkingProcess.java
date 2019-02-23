@@ -5,10 +5,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @Entity
@@ -19,12 +18,12 @@ public class ParkingProcess {
         ONGOING, STOPPED_UNPAID, PAID;
     }
 
-    private @Id @GeneratedValue Integer id;
+    @Id @GeneratedValue private Integer id;
     private Integer meterId;
     private LocalDateTime parkingStartTime;
     private LocalDateTime parkingStopTime;
     private Stage stage;
     private boolean isForDisabled;
-    private Double cost;
+    @Embedded private Money primaryCurrencyCost;
 
 }

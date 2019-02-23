@@ -1,14 +1,14 @@
 package city.parking.controllers;
 
-import city.parking.ParkingProcessStageConverter;
+import city.parking.entities.Money;
 import city.parking.entities.ParkingProcess;
 import city.parking.entities.ParkingProcessMeterSwitch;
 import city.parking.services.ParkingProcessService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -39,7 +39,7 @@ public class ParkingProcessController {
     }
 
     @RequestMapping(value = "/{processId}/costs", method = RequestMethod.GET)
-    public String getParkingCost(@PathVariable Integer processId){
-        return parkingProcessService.getParkingCost(processId) + " PLN";
+    public Set<Money> getParkingCost(@PathVariable Integer processId){
+        return parkingProcessService.getParkingCosts(processId);
     }
 }

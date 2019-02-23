@@ -1,5 +1,6 @@
 package city.parking.services;
 
+import city.parking.entities.Money;
 import city.parking.entities.ParkingProcess;
 import city.parking.entities.Payment;
 import city.parking.repositories.ParkingProcessRepository;
@@ -9,8 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PaymentService {
@@ -33,7 +33,7 @@ public class PaymentService {
     public Payment makePayment(Payment payment) {
         Optional<ParkingProcess> processOptional = parkingProcessRepository.findById(payment.getParkingProcessId());
         processOptional.ifPresent(process -> {
-            payment.setCost(process.getCost());
+            payment.setBalancePaid(process.getPrimaryCurrencyCost());
             payment.setDate(LocalDateTime.now());
             process.setStage(ParkingProcess.Stage.PAID);
             parkingProcessRepository.save(process);
@@ -43,15 +43,27 @@ public class PaymentService {
         return payment;
     }
 
-    public Double getDailyProfit(LocalDate day) {
+    public Collection<Money> getDailyProfit(LocalDate day) {
         LocalDateTime dayStartDate = LocalDateTime.of(day, FIRST_HOUR_IN_DAY);
         LocalDateTime dayEndDate = LocalDateTime.of(day, LAST_HOUR_IN_DAY);
 
         List<Payment> payments = paymentRepository.findAllByDateBetween(dayStartDate, dayEndDate);
-        double dailyProfit = 0;
+        Money balancePaid;
+
+        HashMap<Currency, Money> profitsMap = new HashMap<>();
+        Money moneyEntry;
+
         for(Payment payment : payments){
-            dailyProfit += payment.getCost();
+            balancePaid = payment.getBalancePaid();
+            if(profitsMap.containsKey(balancePaid.getCurrency())){
+                moneyEntry = profitsMap.get(balancePaid.getCurrency());
+                moneyEntry.setAmount(moneyEntry.getAmount() + balancePaid.getAmount());
+                profitsMap.put(moneyEntry.getCurrency(), moneyEntry);
+            }else{
+                profitsMap.put(balancePaid.getCurrency(), balancePaid);
+            }
+
         }
-        return dailyProfit;
+        return profitsMap.values();
     }
 }

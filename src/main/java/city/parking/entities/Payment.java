@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,8 +15,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Setter
 public class Payment {
-    private @Id @GeneratedValue Integer id;
+    @Id @GeneratedValue private Integer id;
     private Integer parkingProcessId;
-    private Double cost;
+    @Embedded private Money balancePaid;
     private LocalDateTime date;
 }

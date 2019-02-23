@@ -1,5 +1,6 @@
 package city.parking.services;
 
+import city.parking.entities.Money;
 import city.parking.entities.ParkingProcessMeterSwitch;
 import city.parking.repositories.ParkingProcessRepository;
 import city.parking.entities.ParkingProcess;
@@ -7,13 +8,13 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ParkingProcessService {
     private static final double regularCostMultiplier = 1.5;
     private static final double costForDisabledMultiplier = 1.2;
+    private static final Currency primaryCurrency = Currency.getInstance("PLN");
 
     private final ParkingProcessRepository repository;
 
@@ -32,6 +33,7 @@ public class ParkingProcessService {
     public ParkingProcess startParkingProcess(ParkingProcess parkingProcess) {
         parkingProcess.setParkingStartTime(LocalDateTime.now());
         parkingProcess.setStage(ParkingProcess.Stage.ONGOING);
+        parkingProcess.setPrimaryCurrencyCost(new Money(primaryCurrency,0.0));
         repository.save(parkingProcess);
         return parkingProcess;
     }
@@ -46,12 +48,15 @@ public class ParkingProcessService {
         }
     }
 
-    public Double getParkingCost(Integer processId) {
+    public Set<Money> getParkingCosts(Integer processId) {
         Optional<ParkingProcess> parkingProcessOptional = repository.findById(processId);
         if(parkingProcessOptional.isPresent()){
-            return parkingProcessOptional.get().getCost();
+            Set<Money> costs = new HashSet<>();
+            Money primaryCurrencyCost = parkingProcessOptional.get().getPrimaryCurrencyCost();
+            costs.add(primaryCurrencyCost);
+            return costs;
         }
-        return -1.0;
+        return new HashSet<>();
     }
 
     private int getParkingTimeInHours(ParkingProcess process){
@@ -64,9 +69,10 @@ public class ParkingProcessService {
         return parkingTimeInHours;
     }
 
-    private double calculateParkingCost(ParkingProcess process){
+    private Money calculatePrimaryParkingCost(ParkingProcess process){
         int parkingTimeInHours = getParkingTimeInHours(process);
-        return process.isForDisabled() ? getDisabledCost(parkingTimeInHours) : getRegularCost(parkingTimeInHours);
+        double primaryCost = process.isForDisabled() ? getDisabledCost(parkingTimeInHours) : getRegularCost(parkingTimeInHours);
+        return new Money(primaryCurrency, primaryCost);
     }
 
     private double getRegularCost(int hoursPassed){
@@ -83,7 +89,7 @@ public class ParkingProcessService {
     private void stopParkingMeter(ParkingProcess process){
         process.setParkingStopTime(LocalDateTime.now());
         process.setStage(ParkingProcess.Stage.STOPPED_UNPAID);
-        process.setCost(calculateParkingCost(process));
+        process.setPrimaryCurrencyCost(calculatePrimaryParkingCost(process));
 
         repository.save(process);
     }

@@ -1,5 +1,6 @@
 package city.parking.controllers;
 
+import city.parking.entities.Money;
 import city.parking.entities.Payment;
 import city.parking.services.PaymentService;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +8,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -30,7 +33,7 @@ public class PaymentController {
 
 
     @RequestMapping(path = "/profits", method = RequestMethod.GET)
-    public Double getDailyProfit(@RequestParam("day") @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate day){
+    public Collection<Money> getDailyProfit(@RequestParam("day") @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate day){
         return paymentService.getDailyProfit(day);
     }
 }
