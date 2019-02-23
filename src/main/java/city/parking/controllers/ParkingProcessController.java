@@ -3,13 +3,18 @@ package city.parking.controllers;
 import city.parking.entities.Money;
 import city.parking.entities.ParkingProcess;
 import city.parking.entities.ParkingProcessPartialUpdateRequest;
+import city.parking.exceptions.ParkingProcessNotFoundException;
 import city.parking.services.ParkingProcessService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -25,13 +30,29 @@ public class ParkingProcessController {
     public ResponseEntity<List<ParkingProcess>> getParkingProcessesByStage(
             @RequestParam(name = "stage", required = false) ParkingProcess.Stage processStage){
         if(processStage != null)
-            return ResponseEntity.ok(parkingProcessService.findMetersByState(processStage));
+            return ResponseEntity.ok(parkingProcessService.findParkingProcessesByStage(processStage));
         return ResponseEntity.ok(parkingProcessService.findAll());
     }
 
+    @GetMapping(value = "/{processId}")
+    public ResponseEntity<ParkingProcess> getParkingProcess(@PathVariable Integer processId){
+        Optional<ParkingProcess> processOptional = parkingProcessService.findById(processId);
+        if(processOptional.isPresent()){
+            return ResponseEntity.ok(processOptional.get());
+        }else{
+            throw new ParkingProcessNotFoundException(processId);
+        }
+    }
+
     @PostMapping
-    public ResponseEntity<ParkingProcess> startParkingProcess(@RequestBody ParkingProcess process){
-        return ResponseEntity.ok(parkingProcessService.startParkingProcess(process));
+    public ResponseEntity<ParkingProcess> startParkingProcess(UriComponentsBuilder ucBuilder,
+                                                              @Valid @RequestBody ParkingProcess process) throws URISyntaxException {
+        ParkingProcess newParkingProcess = parkingProcessService.startParkingProcess(process);
+        URI newProcessLocationURI = ucBuilder.path("/parking-processes/{processId}")
+                .buildAndExpand(newParkingProcess.getId()).toUri();
+
+        return ResponseEntity.created(newProcessLocationURI)
+                .body(newParkingProcess);
     }
 
     @PatchMapping(value = "/{processId}")

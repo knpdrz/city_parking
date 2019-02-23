@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Payment {
     @Id @GeneratedValue
     private Integer id;
-    @NotNull(message = "Parking process id cannot be null")
+    @NotNull(message = "Parking process id has to be set")
     private Integer parkingProcessId;
     @Embedded
     private Money balancePaid;

@@ -17,31 +17,35 @@ public class ParkingProcessService {
     private static final double costForDisabledMultiplier = 1.2;
     private static final Currency primaryCurrency = Currency.getInstance("PLN");
 
-    private final ParkingProcessRepository repository;
+    private final ParkingProcessRepository parkingProcessRepository;
 
-    public ParkingProcessService(ParkingProcessRepository repository){
-        this.repository = repository;
+    public ParkingProcessService(ParkingProcessRepository parkingProcessRepository){
+        this.parkingProcessRepository = parkingProcessRepository;
     }
 
     public List<ParkingProcess> findAll() {
-        return repository.findAll();
+        return parkingProcessRepository.findAll();
     }
 
-    public List<ParkingProcess> findMetersByState(ParkingProcess.Stage processStage) {
-        return repository.findByStage(processStage);
+    public List<ParkingProcess> findParkingProcessesByStage(ParkingProcess.Stage processStage) {
+        return parkingProcessRepository.findByStage(processStage);
+    }
+
+    public Optional<ParkingProcess> findById(Integer processId){
+        return parkingProcessRepository.findById(processId);
     }
 
     public ParkingProcess startParkingProcess(ParkingProcess parkingProcess) {
         parkingProcess.setParkingStartTime(LocalDateTime.now());
         parkingProcess.setStage(ParkingProcess.Stage.ONGOING);
         parkingProcess.setPrimaryCurrencyCost(new Money(primaryCurrency,0.0));
-        repository.save(parkingProcess);
+        parkingProcessRepository.save(parkingProcess);
         return parkingProcess;
     }
 
     public ParkingProcess updateParkingProcessStage(Integer processId,
                                           ParkingProcessPartialUpdateRequest parkingProcessPartialUpdateRequest) {
-        Optional<ParkingProcess> processOptional = repository.findById(processId);
+        Optional<ParkingProcess> processOptional = parkingProcessRepository.findById(processId);
         if (processOptional.isPresent()) {
             ParkingProcess process = processOptional.get();
             if (parkingProcessPartialUpdateRequest.isParkingMeterToBeStopped()) {
@@ -54,7 +58,7 @@ public class ParkingProcessService {
     }
 
     public Set<Money> getParkingCosts(Integer processId) {
-        Optional<ParkingProcess> parkingProcessOptional = repository.findById(processId);
+        Optional<ParkingProcess> parkingProcessOptional = parkingProcessRepository.findById(processId);
         if(parkingProcessOptional.isPresent()){
             Set<Money> costs = new HashSet<>();
             Money primaryCurrencyCost = parkingProcessOptional.get().getPrimaryCurrencyCost();
@@ -96,6 +100,6 @@ public class ParkingProcessService {
         process.setParkingStopTime(LocalDateTime.now());
         process.setStage(ParkingProcess.Stage.STOPPED_UNPAID);
         process.setPrimaryCurrencyCost(calculatePrimaryParkingCost(process));
-        repository.save(process);
+        parkingProcessRepository.save(process);
     }
 }

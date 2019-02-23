@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -19,6 +20,7 @@ public class ParkingProcess {
     }
 
     @Id @GeneratedValue private Integer id;
+    @NotNull(message = "Parking meter id has to be set")
     private Integer meterId;
     private LocalDateTime parkingStartTime;
     private LocalDateTime parkingStopTime;
