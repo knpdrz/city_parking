@@ -4,6 +4,7 @@ import city.parking.entities.Money;
 import city.parking.entities.ParkingProcess;
 import city.parking.entities.ParkingProcessPartialUpdateRequest;
 import city.parking.exceptions.ParkingMeterAlreadyInUseException;
+import city.parking.exceptions.ParkingMeterNotRunningException;
 import city.parking.exceptions.ParkingProcessNotFoundException;
 import city.parking.repositories.ParkingProcessRepository;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,7 @@ public class ParkingProcessService {
         if (processOptional.isPresent()) {
             ParkingProcess process = processOptional.get();
             if (parkingProcessPartialUpdateRequest.isParkingMeterToBeStopped()) {
+                ensureParkingMeterIsRunning(process);
                 stopParkingMeter(process);
             }
             return process;
@@ -84,6 +86,13 @@ public class ParkingProcessService {
         if(ongoingParkingProcessesWithGivenMeterId.size() > 0 ||
                 unpaidParkingProcessesWithGivenMeterId.size() > 0){
             throw new ParkingMeterAlreadyInUseException(toBeStartedMeterId);
+        }
+    }
+
+    private void ensureParkingMeterIsRunning(ParkingProcess process) {
+        //if parking meter is not running it cannot be stopped
+        if(!process.getStage().equals(ParkingProcess.Stage.ONGOING)){
+            throw new ParkingMeterNotRunningException(process.getId());
         }
     }
 
