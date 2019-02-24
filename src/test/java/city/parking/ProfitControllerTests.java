@@ -64,12 +64,12 @@ public class ProfitControllerTests {
 
         //when a GET request is sent to /profits endpoint for daily profits
         mockMvc.perform(get("/profits")
-                        .param("day", dayInApiFormat))
+                .param("day", dayInApiFormat))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(expectedMoneyString)));
     }
 
-    private Payment prepareDummyPayment(Integer paymentProcessId, Currency currency, BigDecimal amountPaid, LocalDateTime paymentDate){
+    private Payment prepareDummyPayment(Integer paymentProcessId, Currency currency, BigDecimal amountPaid, LocalDateTime paymentDate) {
         Payment payment = new Payment();
         payment.setParkingProcessId(paymentProcessId);
         payment.setBalancePaid(new Money(currency, amountPaid));

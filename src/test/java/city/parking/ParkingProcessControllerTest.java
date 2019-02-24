@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.Currency;
 
 import static city.parking.TestUtils.asJsonString;
+import static city.parking.TestUtils.prepareDummyParkingProcess;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -49,11 +50,11 @@ public class ParkingProcessControllerTest {
 
     @Test
     public void givenOneOngoingParkingProcess_whenGetOngoingParkingProcesses_thenStatus200ParkingProcessReturned() throws Exception {
-        ParkingProcess process = prepareDummyParkingProcess(LocalDateTime.now(), ParkingProcess.Stage.ONGOING, false);
+        ParkingProcess process = prepareDummyParkingProcess(LocalDateTime.now(), null, ParkingProcess.Stage.ONGOING, false);
         parkingProcessRepository.save(process);
 
         mockMvc.perform(get("/parking-processes")
-                    .param("stage", ParkingProcess.Stage.ONGOING.toString()))
+                .param("stage", ParkingProcess.Stage.ONGOING.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].meterId", is(process.getMeterId())));
     }
@@ -64,12 +65,11 @@ public class ParkingProcessControllerTest {
         Double parkingCostInPLN = 7.28;
 
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime parkingStartTime = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(),
-                now.getHour() - hoursDiff, now.getMinute());
+        LocalDateTime parkingStartTime = now.minusHours(hoursDiff);
 
         //given
         //a parking process started hoursDiff+1 hours ago
-        ParkingProcess process = prepareDummyParkingProcess(parkingStartTime, ParkingProcess.Stage.ONGOING, true);
+        ParkingProcess process = prepareDummyParkingProcess(parkingStartTime, null, ParkingProcess.Stage.ONGOING, true);
         process = parkingProcessRepository.save(process);
 
         //when
@@ -87,19 +87,8 @@ public class ParkingProcessControllerTest {
         //then
         //parking cost is as calculated before
         mockMvc.perform(get("/parking-processes/{processId}/costs", process.getId()))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].amount", is(parkingCostInPLN)));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].amount", is(parkingCostInPLN)));
     }
-
-    private ParkingProcess prepareDummyParkingProcess(LocalDateTime parkingStartTime, ParkingProcess.Stage stage, boolean forDisabled){
-        ParkingProcess process = new ParkingProcess();
-        process.setMeterId(5);
-        process.setForDisabled(forDisabled);
-        process.setParkingStartTime(parkingStartTime);
-        process.setStage(stage);
-        process.setPrimaryCurrencyCost(new Money(Currency.getInstance("PLN"),new BigDecimal(0)));
-        return process;
-    }
-
 }
 

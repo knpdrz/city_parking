@@ -12,8 +12,11 @@ import java.util.Currency;
 public class ParkingCostCalculationUtil {
     private static final double REGULAR_COST_MULTIPLIER = 1.5;
     private static final double COST_FOR_DISABLED_MULTIPLIER = 1.2;
+
     private static final Currency PRIMARY_CURRENCY = Currency.getInstance("PLN");
+
     private static final int ROUNDING_SCALE = 2; //number of decimal places of money amount to keep
+    private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_EVEN;
 
     public static Currency getPrimaryCurrency(){
         return PRIMARY_CURRENCY;
@@ -23,7 +26,7 @@ public class ParkingCostCalculationUtil {
         int parkingTimeInHours = getParkingTimeInHours(process);
         double primaryCost = process.isForDisabled() ? getDisabledCost(parkingTimeInHours) : getRegularCost(parkingTimeInHours);
         BigDecimal scaledPrimaryCost = new BigDecimal(primaryCost);
-        scaledPrimaryCost = scaledPrimaryCost.setScale(ROUNDING_SCALE, RoundingMode.HALF_EVEN);
+        scaledPrimaryCost = scaledPrimaryCost.setScale(ROUNDING_SCALE, ROUNDING_MODE);
         return new Money(PRIMARY_CURRENCY, scaledPrimaryCost);
     }
 
