@@ -11,7 +11,7 @@ Notes
 
 
 
-Brief endpoints summary
+Brief methods summary
 1. starting a parking meter = creating a ParkingProcess
     POST /parking-processes
     body: { "meterId" : 1, "forDisabled" : true}
@@ -25,3 +25,9 @@ Brief endpoints summary
 5. check daily profits
     GET /profits?day=2019-12-29
 
+additional methods
+6. paying for parking
+    POST /payments
+    body: { "parkingProcessId" : 4 }
+7. getting all payments
+    GET /payments
