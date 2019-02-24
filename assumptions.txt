@@ -6,3 +6,21 @@ Assumptions
 Future
 	- Adding more currencies: It is possible to add different currencies to the app. In order to return more currency options, one could use some source of exchange rates in getDisplayableCosts(Money) method and return new Money objects with added currencies.
 
+
+
+
+
+Brief endpoints summary
+1. starting a parking meter = creating a ParkingProcess
+    POST /parking-processes
+    body: { "meterId" : 1, "forDisabled" : true}
+2. stopping a parking meter
+    PATCH /parking-processes/{processId}
+    body: { "parkingMeterToBeStopped" : true }
+3. check active parking meters (or generally parking processes by stage)
+    GET /parking-processes?stage=ONGOING
+4. check parking cost (after parking meter stopped)
+    GET /parking-processes/{processId}/costs
+5. check daily profits
+    GET /profits?day=2019-12-29
+
