@@ -72,8 +72,6 @@ public class ParkingProcessService {
     
     private Set<Money> getDisplayableCosts(Money primaryCurrencyCost){
         Set<Money> costs = new HashSet<>();
-        primaryCurrencyCost.setAmount(
-                primaryCurrencyCost.getAmount().setScale(roundingScale, RoundingMode.HALF_EVEN));
         costs.add(primaryCurrencyCost);
         return costs;
     }
@@ -91,7 +89,9 @@ public class ParkingProcessService {
     private Money calculatePrimaryParkingCost(ParkingProcess process){
         int parkingTimeInHours = getParkingTimeInHours(process);
         double primaryCost = process.isForDisabled() ? getDisabledCost(parkingTimeInHours) : getRegularCost(parkingTimeInHours);
-        return new Money(primaryCurrency, new BigDecimal(primaryCost));
+        BigDecimal scaledPrimaryCost = new BigDecimal(primaryCost);
+        scaledPrimaryCost = scaledPrimaryCost.setScale(roundingScale, RoundingMode.HALF_EVEN);
+        return new Money(primaryCurrency, scaledPrimaryCost);
     }
 
     private double getRegularCost(int hoursPassed){
