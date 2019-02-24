@@ -31,6 +31,7 @@ public class ParkingCostCalculationUtil {
     }
 
     private static int getParkingTimeInHours(ParkingProcess process) {
+        //get the number of started parking hours
         LocalDateTime startTime = process.getParkingStartTime();
         LocalDateTime stopTime = process.getParkingStopTime();
         long parkingTimeInMillis = Duration.between(startTime, stopTime).toMillis();

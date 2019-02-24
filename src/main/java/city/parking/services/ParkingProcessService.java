@@ -98,6 +98,7 @@ public class ParkingProcessService {
         Money primaryParkingCost = calculatePrimaryParkingCost(process);
         process.setPrimaryCurrencyCost(primaryParkingCost);
 
+        //do not wait for payment if parking was free
         if(primaryParkingCost.getAmount().compareTo(BigDecimal.ZERO) == 0) {
             process.setStage(ParkingProcess.Stage.PAID);
         }else {

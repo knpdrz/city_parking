@@ -22,28 +22,28 @@ import java.util.Set;
 public class ParkingProcessController {
     private final ParkingProcessService parkingProcessService;
 
-    public ParkingProcessController(ParkingProcessService parkingProcessService){
+    public ParkingProcessController(ParkingProcessService parkingProcessService) {
         this.parkingProcessService = parkingProcessService;
     }
 
     @GetMapping
     public ResponseEntity<List<ParkingProcess>> getParkingProcessesByStage(
-            @RequestParam(name = "stage", required = false) ParkingProcess.Stage processStage){
+            @RequestParam(name = "stage", required = false) ParkingProcess.Stage processStage) {
         List<ParkingProcess> processes;
-        if(processStage != null)
+        if (processStage != null)
             processes = parkingProcessService.findParkingProcessesByStage(processStage);
-        else{
+        else {
             processes = parkingProcessService.findAll();
         }
         return ResponseEntity.ok(processes);
     }
 
     @GetMapping(value = "/{processId}")
-    public ResponseEntity<ParkingProcess> getParkingProcess(@PathVariable Integer processId){
+    public ResponseEntity<ParkingProcess> getParkingProcess(@PathVariable Integer processId) {
         Optional<ParkingProcess> processOptional = parkingProcessService.findById(processId);
-        if(processOptional.isPresent()){
+        if (processOptional.isPresent()) {
             return ResponseEntity.ok(processOptional.get());
-        }else{
+        } else {
             throw new ParkingProcessNotFoundException(processId);
         }
     }
@@ -61,14 +61,14 @@ public class ParkingProcessController {
 
     @PatchMapping(value = "/{processId}")
     public ResponseEntity stopParkingMeter(@PathVariable Integer processId,
-                                           @RequestBody ParkingProcessPartialUpdateRequest parkingProcessPartialUpdateRequest){
+                                           @RequestBody ParkingProcessPartialUpdateRequest parkingProcessPartialUpdateRequest) {
         return new ResponseEntity<>(parkingProcessService
                 .updateParkingProcessStage(processId, parkingProcessPartialUpdateRequest),
                 HttpStatus.SEE_OTHER);
     }
 
     @GetMapping(value = "/{processId}/costs")
-    public ResponseEntity<Set<Money>> getParkingCost(@PathVariable Integer processId){
+    public ResponseEntity<Set<Money>> getParkingCost(@PathVariable Integer processId) {
         return ResponseEntity.ok(parkingProcessService.getParkingCosts(processId));
     }
 }
