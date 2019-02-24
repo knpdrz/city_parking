@@ -1,11 +1,12 @@
 Assumptions
 	- The cost of parking process is rounded to the second decimal place after calculation based on given rules. Its value is kept in app's primary currency (PLN).
 	- The cost of parking is set after parking meter is stopped (ofc it could be changed according to needs, like a calculation of cost at the moment of the check).
+	- Parking cost is calculated based on the number of started hours with accuracy to minutes.
 	- I did not focus too much on 'edge cases' regarding makePayment method, although it wouldn't take long to cover them. Improvements would (for instance )require checks if payment to given parking process was already made or if it was free.
 
-Future
+Notes
 	- Adding more currencies: It is possible to add different currencies to the app. In order to return more currency options, one could use some source of exchange rates in getDisplayableCosts(Money) method and return new Money objects with added currencies.
-
+    - Stopping a parking meter could have been performed using more RPC-style call, but in the end I have decided on more REST-ful solution: using PATCH and passing an instruction explaining what kind of change should be made to a resource.
 
 
 
