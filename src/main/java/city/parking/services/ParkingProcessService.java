@@ -95,8 +95,14 @@ public class ParkingProcessService {
 
     private void stopParkingMeter(ParkingProcess process) {
         process.setParkingStopTime(LocalDateTime.now());
-        process.setStage(ParkingProcess.Stage.STOPPED_UNPAID);
-        process.setPrimaryCurrencyCost(calculatePrimaryParkingCost(process));
+        Money primaryParkingCost = calculatePrimaryParkingCost(process);
+        process.setPrimaryCurrencyCost(primaryParkingCost);
+
+        if(primaryParkingCost.getAmount().compareTo(BigDecimal.ZERO) == 0) {
+            process.setStage(ParkingProcess.Stage.PAID);
+        }else {
+            process.setStage(ParkingProcess.Stage.STOPPED_UNPAID);
+        }
         parkingProcessRepository.save(process);
     }
 }
