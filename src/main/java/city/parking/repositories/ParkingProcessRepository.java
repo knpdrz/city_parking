@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ParkingProcessRepository extends JpaRepository<ParkingProcess, Integer> {
     List<ParkingProcess> findByStage(ParkingProcess.Stage stage);
-    ParkingProcess findByMeterIdAndStage(Integer meterId, ParkingProcess.Stage stage);
+    List<ParkingProcess> findByMeterIdAndStage(Integer meterId, ParkingProcess.Stage stage);
 }
