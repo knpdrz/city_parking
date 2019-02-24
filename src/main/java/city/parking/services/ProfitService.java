@@ -39,7 +39,7 @@ public class ProfitService {
             balancePaid = payment.getBalancePaid();
             if(profitsMap.containsKey(balancePaid.getCurrency())){
                 moneyEntry = profitsMap.get(balancePaid.getCurrency());
-                moneyEntry.setAmount(moneyEntry.getAmount() + balancePaid.getAmount());
+                moneyEntry.setAmount(moneyEntry.getAmount().add(balancePaid.getAmount()));
                 profitsMap.put(moneyEntry.getCurrency(), moneyEntry);
             }else{
                 profitsMap.put(balancePaid.getCurrency(), balancePaid);

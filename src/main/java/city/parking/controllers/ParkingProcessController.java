@@ -29,9 +29,13 @@ public class ParkingProcessController {
     @GetMapping
     public ResponseEntity<List<ParkingProcess>> getParkingProcessesByStage(
             @RequestParam(name = "stage", required = false) ParkingProcess.Stage processStage){
+        List<ParkingProcess> processes;
         if(processStage != null)
-            return ResponseEntity.ok(parkingProcessService.findParkingProcessesByStage(processStage));
-        return ResponseEntity.ok(parkingProcessService.findAll());
+            processes = parkingProcessService.findParkingProcessesByStage(processStage);
+        else{
+            processes = parkingProcessService.findAll();
+        }
+        return ResponseEntity.ok(processes);
     }
 
     @GetMapping(value = "/{processId}")

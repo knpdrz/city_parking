@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.Currency;
 
 @Data
@@ -11,9 +12,9 @@ import java.util.Currency;
 @NoArgsConstructor
 public class Money {
     private Currency currency;
-    private double amount;
+    private BigDecimal amount;
 
-    public Money(Currency currency, double amount){
+    public Money(Currency currency, BigDecimal amount){
         this.currency = currency;
         this.amount = amount;
     }

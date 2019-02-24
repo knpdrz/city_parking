@@ -7,6 +7,8 @@ import city.parking.exceptions.ParkingProcessNotFoundException;
 import city.parking.repositories.ParkingProcessRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -16,6 +18,7 @@ public class ParkingProcessService {
     private static final double regularCostMultiplier = 1.5;
     private static final double costForDisabledMultiplier = 1.2;
     private static final Currency primaryCurrency = Currency.getInstance("PLN");
+    private static final int roundingScale = 2; //number of decimal places of money amount to keep
 
     private final ParkingProcessRepository parkingProcessRepository;
 
@@ -38,7 +41,7 @@ public class ParkingProcessService {
     public ParkingProcess startParkingProcess(ParkingProcess parkingProcess) {
         parkingProcess.setParkingStartTime(LocalDateTime.now());
         parkingProcess.setStage(ParkingProcess.Stage.ONGOING);
-        parkingProcess.setPrimaryCurrencyCost(new Money(primaryCurrency,0.0));
+        parkingProcess.setPrimaryCurrencyCost(new Money(primaryCurrency,new BigDecimal(0)));
         parkingProcessRepository.save(parkingProcess);
         return parkingProcess;
     }
@@ -60,13 +63,19 @@ public class ParkingProcessService {
     public Set<Money> getParkingCosts(Integer processId) {
         Optional<ParkingProcess> parkingProcessOptional = parkingProcessRepository.findById(processId);
         if(parkingProcessOptional.isPresent()){
-            Set<Money> costs = new HashSet<>();
             Money primaryCurrencyCost = parkingProcessOptional.get().getPrimaryCurrencyCost();
-            costs.add(primaryCurrencyCost);
-            return costs;
+            return getDisplayableCosts(primaryCurrencyCost);
         }else{
             throw new ParkingProcessNotFoundException(processId);
         }
+    }
+    
+    private Set<Money> getDisplayableCosts(Money primaryCurrencyCost){
+        Set<Money> costs = new HashSet<>();
+        primaryCurrencyCost.setAmount(
+                primaryCurrencyCost.getAmount().setScale(roundingScale, RoundingMode.HALF_EVEN));
+        costs.add(primaryCurrencyCost);
+        return costs;
     }
 
     private int getParkingTimeInHours(ParkingProcess process){
@@ -82,7 +91,7 @@ public class ParkingProcessService {
     private Money calculatePrimaryParkingCost(ParkingProcess process){
         int parkingTimeInHours = getParkingTimeInHours(process);
         double primaryCost = process.isForDisabled() ? getDisabledCost(parkingTimeInHours) : getRegularCost(parkingTimeInHours);
-        return new Money(primaryCurrency, primaryCost);
+        return new Money(primaryCurrency, new BigDecimal(primaryCost));
     }
 
     private double getRegularCost(int hoursPassed){

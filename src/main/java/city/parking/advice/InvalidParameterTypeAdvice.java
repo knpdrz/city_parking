@@ -1,4 +1,4 @@
-package city.parking.exceptions;
+package city.parking.advice;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;

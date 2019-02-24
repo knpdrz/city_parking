@@ -1,4 +1,4 @@
-package city.parking;
+package city.parking.converters;
 
 import city.parking.entities.ParkingProcess;
 import org.springframework.core.convert.converter.Converter;
