@@ -4,7 +4,6 @@ import city.parking.entities.Money;
 import city.parking.entities.ParkingProcess;
 import city.parking.entities.ParkingProcessPartialUpdateRequest;
 import city.parking.repositories.ParkingProcessRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +16,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Currency;
-import java.util.Random;
 
+import static city.parking.TestUtils.asJsonString;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -92,14 +89,6 @@ public class ParkingProcessControllerTest {
         mockMvc.perform(get("/parking-processes/{processId}/costs", process.getId()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].amount", is(parkingCostInPLN)));
-    }
-
-    private static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private ParkingProcess prepareDummyParkingProcess(LocalDateTime parkingStartTime, ParkingProcess.Stage stage, boolean forDisabled){
