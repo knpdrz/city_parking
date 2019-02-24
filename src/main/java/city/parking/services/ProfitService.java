@@ -15,11 +15,11 @@ import java.util.List;
 
 @Service
 public class ProfitService {
-    private static final LocalTime FIRST_HOUR_IN_DAY = LocalTime.of(0,0,0);
-    private static final LocalTime LAST_HOUR_IN_DAY = LocalTime.of(23,59, 59);
+    private static final LocalTime FIRST_HOUR_IN_DAY = LocalTime.of(0, 0, 0);
+    private static final LocalTime LAST_HOUR_IN_DAY = LocalTime.of(23, 59, 59);
     private final PaymentRepository paymentRepository;
 
-    public ProfitService(PaymentRepository paymentRepository){
+    public ProfitService(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
     }
 
@@ -31,17 +31,17 @@ public class ProfitService {
         return getPaidBalanceSummary(payments);
     }
 
-    private Collection<Money> getPaidBalanceSummary(List<Payment> payments){
+    private Collection<Money> getPaidBalanceSummary(List<Payment> payments) {
         Money balancePaid, moneyEntry;
         HashMap<Currency, Money> profitsMap = new HashMap<>();
 
-        for(Payment payment : payments){
+        for (Payment payment : payments) {
             balancePaid = payment.getBalancePaid();
-            if(profitsMap.containsKey(balancePaid.getCurrency())){
+            if (profitsMap.containsKey(balancePaid.getCurrency())) {
                 moneyEntry = profitsMap.get(balancePaid.getCurrency());
                 moneyEntry.setAmount(moneyEntry.getAmount().add(balancePaid.getAmount()));
                 profitsMap.put(moneyEntry.getCurrency(), moneyEntry);
-            }else{
+            } else {
                 profitsMap.put(balancePaid.getCurrency(), balancePaid);
             }
         }

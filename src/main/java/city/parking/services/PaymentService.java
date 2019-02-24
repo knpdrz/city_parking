@@ -5,7 +5,6 @@ import city.parking.entities.Payment;
 import city.parking.exceptions.ParkingProcessNotFoundException;
 import city.parking.repositories.ParkingProcessRepository;
 import city.parking.repositories.PaymentRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,12 +18,12 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
 
     public PaymentService(ParkingProcessRepository parkingProcessRepository,
-                          PaymentRepository paymentRepository){
+                          PaymentRepository paymentRepository) {
         this.parkingProcessRepository = parkingProcessRepository;
         this.paymentRepository = paymentRepository;
     }
 
-    public List<Payment> findAllPayments(){
+    public List<Payment> findAllPayments() {
         return paymentRepository.findAll();
     }
 
@@ -34,12 +33,12 @@ public class PaymentService {
 
     public Payment makePayment(Payment payment) {
         Optional<ParkingProcess> processOptional = parkingProcessRepository.findById(payment.getParkingProcessId());
-        if(processOptional.isPresent()){
+        if (processOptional.isPresent()) {
             ParkingProcess process = processOptional.get();
             setPaymentDetails(payment, process);
             updateParkingProcess(process);
             return payment;
-        }else {
+        } else {
             throw new ParkingProcessNotFoundException(payment.getParkingProcessId());
         }
     }
@@ -49,7 +48,7 @@ public class PaymentService {
         parkingProcessRepository.save(process);
     }
 
-    private void setPaymentDetails(Payment payment, ParkingProcess process){
+    private void setPaymentDetails(Payment payment, ParkingProcess process) {
         payment.setBalancePaid(process.getPrimaryCurrencyCost());
         payment.setDate(LocalDateTime.now());
         paymentRepository.save(payment);
