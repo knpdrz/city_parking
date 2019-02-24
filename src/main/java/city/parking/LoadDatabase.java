@@ -19,7 +19,7 @@ public class LoadDatabase {
     CommandLineRunner initDatabase(ParkingProcessRepository repository) {
         return args -> {
             ParkingProcess p1 = new ParkingProcess();
-            p1.setMeterId(1);
+            p1.setMeterId(100);
             p1.setParkingStartTime(LocalDateTime.of(2019, 2, 1, 7, 15));
             p1.setParkingStopTime(LocalDateTime.of(2019, 2, 1, 10, 15));
             p1.setStage(ParkingProcess.Stage.STOPPED_UNPAID);
@@ -27,7 +27,7 @@ public class LoadDatabase {
             repository.save(p1);
 
             ParkingProcess p2 = new ParkingProcess();
-            p2.setMeterId(2);
+            p2.setMeterId(200);
             p2.setParkingStartTime(LocalDateTime.of(2019, 2, 1, 6, 15));
             p2.setParkingStopTime(LocalDateTime.of(2019, 2, 1, 10, 16));
             p2.setStage(ParkingProcess.Stage.STOPPED_UNPAID);

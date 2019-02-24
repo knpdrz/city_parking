@@ -3,6 +3,7 @@ package city.parking.services;
 import city.parking.entities.Money;
 import city.parking.entities.ParkingProcess;
 import city.parking.entities.ParkingProcessPartialUpdateRequest;
+import city.parking.exceptions.ParkingMeterAlreadyInUseException;
 import city.parking.exceptions.ParkingProcessNotFoundException;
 import city.parking.repositories.ParkingProcessRepository;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,9 @@ public class ParkingProcessService {
     }
 
     public ParkingProcess startParkingProcess(ParkingProcess parkingProcess) {
+        Integer toBeStartedMeterId = parkingProcess.getMeterId();
+        ensureParkingMeterIsNotUsed(toBeStartedMeterId);
+
         parkingProcess.setParkingStartTime(LocalDateTime.now());
         parkingProcess.setStage(ParkingProcess.Stage.ONGOING);
         parkingProcess.setPrimaryCurrencyCost(new Money(ParkingCostCalculationUtil.getPrimaryCurrency(), new BigDecimal("0")));
@@ -66,6 +70,20 @@ public class ParkingProcessService {
             return getDisplayableCosts(primaryCurrencyCost);
         } else {
             throw new ParkingProcessNotFoundException(processId);
+        }
+    }
+
+    private void ensureParkingMeterIsNotUsed(Integer toBeStartedMeterId){
+        //if parking meter is running or it is unpaid (parking process ONGOING or STOPPED_UNPAID stage)
+        //it cannot be started
+        List<ParkingProcess> ongoingParkingProcessesWithGivenMeterId =
+                parkingProcessRepository.findByMeterIdAndStage(toBeStartedMeterId, ParkingProcess.Stage.ONGOING);
+        List<ParkingProcess> unpaidParkingProcessesWithGivenMeterId =
+                parkingProcessRepository.findByMeterIdAndStage(toBeStartedMeterId, ParkingProcess.Stage.STOPPED_UNPAID);
+
+        if(ongoingParkingProcessesWithGivenMeterId.size() > 0 ||
+                unpaidParkingProcessesWithGivenMeterId.size() > 0){
+            throw new ParkingMeterAlreadyInUseException(toBeStartedMeterId);
         }
     }
 
